@@ -5,7 +5,7 @@ with open("../../README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="bellande_limit",
-    version="0.3.3",
+    version="0.1.0",
     description="Robots Limit",
     long_description=long_description,
     long_description_content_type="text/markdown",
