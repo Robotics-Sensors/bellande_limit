@@ -5,7 +5,7 @@ with open("../../README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="bellande_limit",
-    version="0.1.0",
+    version="0.1.1",
     description="Robots Limit",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -27,7 +27,7 @@ setup(
         "dev": ["pytest", "pytest-cov[all]", "mypy", "black"],
     },
     package_data={
-        'bellande_limit': ['Bellande_Step'],
+        'bellande_limit': ['Bellande_Limit'],
     },
     entry_points={
         'console_scripts': [
