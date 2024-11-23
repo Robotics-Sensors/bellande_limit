@@ -121,6 +121,19 @@ curl -X 'POST' \
 ### Installation
 - `$ pip install bellande_limit`
 
+### Usage 
+```
+bellande_limit_api \
+  --node0 "[0,0,0]" \
+  --node1 "[100,100,100]" \
+  --environment "[1000,1000,1000]" \
+  --size "[10,10,10]" \
+  --goal "[200,200,200]" \
+  --obstacles '[{"position":[50,50,50],"dimensions":[20,20,20]}]' \
+  --search-radius 50 \
+  --sample-points 20
+```
+
 ### Upgrade (if not upgraded)
 - `$ pip install --upgrade bellande_limit`
 
