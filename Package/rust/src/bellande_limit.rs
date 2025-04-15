@@ -17,7 +17,7 @@ use reqwest;
 use serde_json::{json, Value};
 use std::error::Error;
 use std::path::{Path, PathBuf};
-use std::process::{self, Command};
+use std::process::Command;
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
@@ -59,7 +59,7 @@ struct Opt {
     use_executable: bool,
 }
 
-async fn make_bellande_limit_request(
+pub async fn make_bellande_limit_request(
     node0: Value,
     node1: Value,
     environment: Value,
@@ -99,7 +99,7 @@ async fn make_bellande_limit_request(
     Ok(response)
 }
 
-fn get_executable_path() -> PathBuf {
+pub fn get_executable_path() -> PathBuf {
     if cfg!(target_os = "windows") {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("Bellande_Limit.exe")
     } else {
@@ -107,7 +107,7 @@ fn get_executable_path() -> PathBuf {
     }
 }
 
-fn run_bellande_limit_executable(
+pub fn run_bellande_limit_executable(
     node0: &str,
     node1: &str,
     environment: &str,
@@ -190,67 +190,4 @@ fn run_bellande_limit_executable(
         )
         .into())
     }
-}
-
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let opt = Opt::from_args();
-
-    // Parse JSON strings to Values for validation
-    let node0: Value =
-        serde_json::from_str(&opt.node0).map_err(|e| format!("Error parsing node0: {}", e))?;
-    let node1: Value =
-        serde_json::from_str(&opt.node1).map_err(|e| format!("Error parsing node1: {}", e))?;
-    let environment: Value = serde_json::from_str(&opt.environment)
-        .map_err(|e| format!("Error parsing environment: {}", e))?;
-    let size: Value =
-        serde_json::from_str(&opt.size).map_err(|e| format!("Error parsing size: {}", e))?;
-    let goal: Value =
-        serde_json::from_str(&opt.goal).map_err(|e| format!("Error parsing goal: {}", e))?;
-    let obstacles_ref = opt.obstacles.as_ref();
-    let obstacles: Option<Value> = obstacles_ref
-        .map(|o| serde_json::from_str(o))
-        .transpose()
-        .map_err(|e| format!("Error parsing obstacles: {}", e))?;
-
-    if opt.use_executable {
-        // Run using local executable
-        if let Err(e) = run_bellande_limit_executable(
-            &opt.node0,
-            &opt.node1,
-            &opt.environment,
-            &opt.size,
-            &opt.goal,
-            obstacles_ref.map(String::as_str),
-            opt.search_radius,
-            opt.sample_points,
-        ) {
-            eprintln!("Error: {}", e);
-            process::exit(1);
-        }
-    } else {
-        // Run using API
-        match make_bellande_limit_request(
-            node0,
-            node1,
-            environment,
-            size,
-            goal,
-            obstacles,
-            opt.search_radius,
-            opt.sample_points,
-        )
-        .await
-        {
-            Ok(result) => {
-                println!("{}", serde_json::to_string_pretty(&result)?);
-            }
-            Err(e) => {
-                eprintln!("Error: {}", e);
-                process::exit(1);
-            }
-        }
-    }
-
-    Ok(())
 }
