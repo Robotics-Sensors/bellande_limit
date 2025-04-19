@@ -99,6 +99,47 @@ pub async fn make_bellande_limit_request(
     Ok(response)
 }
 
+pub async fn make_bellande_limit_request_local(
+    url: &str,
+    node0: Value,
+    node1: Value,
+    environment: Value,
+    size: Value,
+    goal: Value,
+    obstacles: Option<Value>,
+    search_radius: f64,
+    sample_points: i32,
+) -> Result<Value, Box<dyn Error>> {
+    let client = reqwest::Client::new();
+    let url = url;
+
+    let payload = json!({
+        "node0": node0,
+        "node1": node1,
+        "environment": environment,
+        "size": size,
+        "goal": goal,
+        "obstacles": obstacles.unwrap_or(json!([])),
+        "search_radius": search_radius,
+        "sample_points": sample_points,
+        "auth": {
+            "authorization_key": "bellande_web_api_opensource"
+        }
+    });
+
+    let response = client
+        .post(url)
+        .header("accept", "application/json")
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .send()
+        .await?
+        .json::<Value>()
+        .await?;
+
+    Ok(response)
+}
+
 pub fn get_executable_path() -> PathBuf {
     if cfg!(target_os = "windows") {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("Bellande_Limit.exe")
