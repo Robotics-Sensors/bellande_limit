@@ -1,6 +1,6 @@
 [package]
 name = "bellande_limit"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Bellande Robotics Sensors Research Innovation Center"]
 description = "Bellande Adaptive Step Size dynamically adjusts movement increments for optimal robotic path planning and navigation"
